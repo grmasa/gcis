@@ -13,7 +13,7 @@ public class DesktopLauncher {
 		config.addIcon("icon128.png", Files.FileType.Internal);
 		config.addIcon("icon32.png", Files.FileType.Internal);
 		config.addIcon("icon16.png", Files.FileType.Internal);
-		config.title = "Poland can into Space";
+		config.title = "Greece can into Space";
 		new LwjglApplication(new Game(), config);
 	}
 }

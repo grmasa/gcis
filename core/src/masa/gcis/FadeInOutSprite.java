@@ -19,6 +19,14 @@ public class FadeInOutSprite extends Actor {
         setColor(1f,1f,1f,0f);
         setPosition(Game.WIDTH/2f - sprite.getWidth()/2f, y);
     }
+	
+	public FadeInOutSprite(Texture texture, float fadeInDuration, float fadeOutDuration) {
+        this.fadeInDuration = fadeInDuration;
+        this.fadeOutDuration = fadeOutDuration;
+        sprite = new Sprite(texture);
+        setColor(1f,1f,1f,0f);
+        setPosition(Game.WIDTH - sprite.getWidth(), Game.HEIGHT - sprite.getHeight()-5);
+    }
 
     public void show() {
         addAction(Actions.fadeIn(fadeInDuration));

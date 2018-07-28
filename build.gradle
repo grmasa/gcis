@@ -18,9 +18,9 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
 
-    version = 'v1.0.0-alpha'
+    version = 'v1.1.0-alpha'
     ext {
-        appName = "Poland can into Space"
+        appName = "Greece can into Space"
         gdxVersion = '1.9.6'
         roboVMVersion = '2.3.1'
         box2DLightsVersion = '1.4'

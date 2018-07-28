@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -20,9 +21,6 @@ import masa.gcis.sky.SkyActor;
 import java.util.Vector;
 
 import static com.badlogic.gdx.Gdx.input;
-
-
-
 
 public class GameStage extends Stage {
     Texture img;
@@ -43,7 +41,7 @@ public class GameStage extends Stage {
     private Camera b2dCamera;
     private SkyActor skyActor;
     private ObstacleActor leftBorder, rightBorder, bottomSensor;
-    private FadeInOutSprite logo, tapToStart;
+    private FadeInOutSprite logo, tapToStart, questionmark, helpbox;
     private Gameover gameover;
     private Array<Fan> fanList = new Array<>();
     private Stage hud;
@@ -56,7 +54,8 @@ public class GameStage extends Stage {
     private enum Mode {
         START,
         PLAY,
-        TRY_AGAIN
+        TRY_AGAIN,
+		HELP
     }
     private Mode currentMode = Mode.START;
 
@@ -149,12 +148,19 @@ public class GameStage extends Stage {
         logo = new FadeInOutSprite(Game.content.getTexture("logo"), 0.8f, 0.3f, 800f);
         this.hud.addActor(logo);
 
+        helpbox = new FadeInOutSprite(Game.content.getTexture("helpbox"), 0.8f, 0.3f, 800f);
+        this.hud.addActor(helpbox);
+
+        questionmark = new FadeInOutSprite(Game.content.getTexture("questionmark"), 0.8f, 0.3f);
+        this.hud.addActor(questionmark);
+
         tapToStart = new FadeInOutSprite(Game.content.getTexture("taptostart"), 0.9f, 0.3f, 500f);
         this.hud.addActor(tapToStart);
 
         gameover = new Gameover(0.9f, 0.3f, 500f);
         this.hud.addActor(gameover);
 
+        questionmark.show();
         logo.show();
         tapToStart.show();
 
@@ -296,16 +302,27 @@ public class GameStage extends Stage {
     public boolean touchDown (int screenX, int screenY, int pointer, int button) {
         boolean actionsFinished = logo.getActions().size == 0 && tapToStart.getActions().size == 0 && gameover.getActions().size == 0;
         if(actionsFinished) {
-            if ((currentMode == Mode.START || currentMode == Mode.TRY_AGAIN)) {
-                if (currentMode == Mode.TRY_AGAIN) {
-                    gameover.hide();
-                    restart();
+            //close help box
+            if(currentMode == Mode.HELP){
+                helpbox.hide();
+                currentMode = Mode.START;
+            }else if ((currentMode == Mode.START || currentMode == Mode.TRY_AGAIN)) {
+                //check if questionmark is pressed and activate help mode
+                Sprite sprite = new Sprite(Game.content.getTexture("questionmark"));
+                if( screenX>Game.WIDTH - sprite.getWidth() && screenY < sprite.getHeight()) {
+                    helpbox.show();
+                    currentMode = Mode.HELP;
+                }else {
+                    if (currentMode == Mode.TRY_AGAIN) {
+                        gameover.hide();
+                        restart();
+                    }
+                    currentMode = Mode.PLAY;
+                    logo.hide();
+                    questionmark.hide();
+                    tapToStart.hide();
+                    startGame();
                 }
-                currentMode = Mode.PLAY;
-                logo.hide();
-                tapToStart.hide();
-                startGame();
-
             } else {
                 Vector2 stageCoords = screenToStageCoordinates(new Vector2(screenX, screenY));
                 Actor hittedActor = hit(stageCoords.x, stageCoords.y, true);
